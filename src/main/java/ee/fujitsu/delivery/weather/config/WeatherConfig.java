@@ -2,6 +2,7 @@ package ee.fujitsu.delivery.weather.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -16,5 +17,10 @@ public class WeatherConfig {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    public MappingJackson2XmlHttpMessageConverter mappingJackson2XmlHttpMessageConverter() {
+        return new MappingJackson2XmlHttpMessageConverter();
     }
 }

@@ -13,14 +13,10 @@ public class WeatherConfig {
 
     /**
      * Configures and provides a RestTemplate bean for making HTTP requests.
-     */
+     *
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
-    @Bean
-    public MappingJackson2XmlHttpMessageConverter mappingJackson2XmlHttpMessageConverter() {
-        return new MappingJackson2XmlHttpMessageConverter();
-    }
+     */
 }

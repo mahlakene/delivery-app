@@ -3,7 +3,7 @@ package ee.fujitsu.delivery.weather.controller;
 import ee.fujitsu.delivery.weather.dto.WeatherDto;
 import ee.fujitsu.delivery.weather.service.WeatherService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +19,8 @@ public class WeatherController {
     /**
      * Retrieves weather data.
      */
-    @GetMapping
-    public WeatherDto getWeatherData() {
-        return weatherService.getWeatherInfo();
+    @PostMapping
+    public void registerWeatherData() {
+        weatherService.registerWeatherData();
     }
 }

@@ -3,7 +3,7 @@ package ee.fujitsu.delivery.app.service;
 import ee.fujitsu.delivery.app.dto.WeatherDto;
 import ee.fujitsu.delivery.app.entity.BaseFeeEntity;
 import ee.fujitsu.delivery.app.entity.CityEntity;
-import ee.fujitsu.delivery.app.entity.extrafee.AirTemperatureFeeEntity;
+import ee.fujitsu.delivery.app.exception.ForbiddenVehicleException;
 import ee.fujitsu.delivery.app.repository.BaseFeeRepository;
 import ee.fujitsu.delivery.app.repository.CityRepository;
 import ee.fujitsu.delivery.app.repository.extrafee.AirTemperatureFeeRepository;
@@ -12,7 +12,6 @@ import ee.fujitsu.delivery.app.repository.extrafee.WindSpeedFeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -39,10 +38,11 @@ public class DeliveryFeeService {
         Integer wmoCode;
         Optional<CityEntity> cityEntity = cityRepository.findById(cityId);
         if (cityEntity.isPresent()) {
-            wmoCode = cityEntity.get().getWeatherStationWmo();
+            wmoCode = cityEntity.get().getWmoCode();
         } else {
             throw new IllegalArgumentException();
         }
+        //throw new ForbiddenVehicleException("Cant use");
         WeatherDto weatherDto = weatherService.getWeatherInfo(wmoCode, dateTime);
         BigDecimal airTemperatureFee = getAirTemperatureFee(vehicleId, weatherDto.getAirTemperature());
         BigDecimal windSpeedFee = getWindSpeedFee(vehicleId, weatherDto.getWindSpeed());

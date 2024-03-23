@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface CityRepository extends JpaRepository<CityEntity, Long> {
 
-    @Query("SELECT c.weatherStationWmo FROM CityEntity c")
+    @Query("SELECT c.wmoCode FROM CityEntity c")
     List<Integer> findAllWeatherStationWmos();
 
     CityEntity findByName(String name);

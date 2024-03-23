@@ -1,11 +1,12 @@
-package ee.fujitsu.delivery.weather.controller;
+package ee.fujitsu.delivery.app.controller;
 
-import ee.fujitsu.delivery.weather.dto.WeatherDto;
-import ee.fujitsu.delivery.weather.service.WeatherService;
+import ee.fujitsu.delivery.app.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 /**
  * Controller class for managing weather data.

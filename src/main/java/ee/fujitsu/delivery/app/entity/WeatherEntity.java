@@ -1,4 +1,4 @@
-package ee.fujitsu.delivery.weather.entity;
+package ee.fujitsu.delivery.app.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,10 +16,10 @@ public class WeatherEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long timeStamp;
     private String stationName;
-    private Integer wmo;
+    private Long timeStamp;
+    private Integer wmoCode;
     private Float airTemperature;
     private Float windSpeed;
-    private String weatherPhenomenon;
+    private String phenomenon;
 }

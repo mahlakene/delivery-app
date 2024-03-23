@@ -1,6 +1,6 @@
-package ee.fujitsu.delivery.weather.repository;
+package ee.fujitsu.delivery.app.repository;
 
-import ee.fujitsu.delivery.weather.entity.WeatherEntity;
+import ee.fujitsu.delivery.app.entity.WeatherEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

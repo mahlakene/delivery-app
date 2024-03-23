@@ -1,4 +1,4 @@
-package ee.fujitsu.delivery.weather.dto;
+package ee.fujitsu.delivery.app.dto;
 
 import lombok.Data;
 

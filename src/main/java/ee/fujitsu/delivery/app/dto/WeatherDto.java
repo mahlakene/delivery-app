@@ -13,5 +13,5 @@ public class WeatherDto {
     private Integer wmo;
     private Float airTemperature;
     private Float windSpeed;
-    private String weatherPhenomenon;
+    private String phenomenon;
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface WindSpeedFeeRepository  extends JpaRepository<WindSpeedFeeEntity, Long> {
 
     @Query("SELECT a.fee FROM WindSpeedFeeEntity a " +
-            "WHERE :windSpeed BETWEEN a.lowerBound AND a.upperBound " +
+            "WHERE :windSpeed >= a.lowerBound AND :windSpeed < a.upperBound " +
             "AND :vehicleId = a.vehicleId")
     Optional<BigDecimal> findFeeByWindSpeedAndVehicle(Float windSpeed, Long vehicleId);
 }

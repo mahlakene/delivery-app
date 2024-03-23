@@ -12,24 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service class for getting weather data.
@@ -84,7 +72,7 @@ public class WeatherService {
             throw new IllegalArgumentException();
         }
         if (dateTime == null) {
-            return weatherRepository.toDto(allDataOfCity.get(0));
+            return weatherMapper.toDto(allDataOfCity.get(0));
         }
         ZoneId zoneId = ZoneId.of("Europe/Tallinn");  // Estonia's time zone
         long targetUnixTimestamp = dateTime.atZone(zoneId).toEpochSecond();
@@ -98,6 +86,6 @@ public class WeatherService {
                 closestWeather = weather;
             }
         }
-        return weatherRepository.toDto(closestWeather);
+        return weatherMapper.toDto(closestWeather);
     }
 }

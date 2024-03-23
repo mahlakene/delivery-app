@@ -19,8 +19,8 @@ public class WindSpeedFeeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer lowerBound;
-    private Integer upperBound;
+    private Float lowerBound;
+    private Float upperBound;
     private Long vehicleId;
     private BigDecimal fee;
 }

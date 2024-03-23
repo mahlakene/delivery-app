@@ -46,7 +46,7 @@ public class DeliveryFeeService {
         WeatherDto weatherDto = weatherService.getWeatherInfo(wmoCode, dateTime);
         BigDecimal airTemperatureFee = getAirTemperatureFee(vehicleId, weatherDto.getAirTemperature());
         BigDecimal windSpeedFee = getWindSpeedFee(vehicleId, weatherDto.getWindSpeed());
-        BigDecimal phenomenonFee = getPhenomenonFee(vehicleId, weatherDto.getWeatherPhenomenon());
+        BigDecimal phenomenonFee = getPhenomenonFee(vehicleId, weatherDto.getPhenomenon());
         return airTemperatureFee.add(windSpeedFee).add(phenomenonFee);
     }
 

@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface WeatherPhenomenonRepository  extends JpaRepository<PhenomenonFeeEntity, Long> {
 
     @Query("SELECT a.fee FROM PhenomenonFeeEntity a " +
-            "WHERE :phenomenon = a.name " +
+            "WHERE LOWER(:phenomenon) LIKE CONCAT('%', LOWER(a.name), '%')" +
             "AND :vehicleId = a.vehicleId")
     Optional<BigDecimal> findFeeByPhenomenonAndVehicle(String phenomenon, Long vehicleId);
 }

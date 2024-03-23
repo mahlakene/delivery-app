@@ -1,6 +1,7 @@
 package ee.fujitsu.delivery.app.mapper;
 
 import ee.fujitsu.delivery.app.dto.Station;
+import ee.fujitsu.delivery.app.dto.WeatherDto;
 import ee.fujitsu.delivery.app.entity.WeatherEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,4 +11,6 @@ import org.mapstruct.ReportingPolicy;
 public interface WeatherMapper {
 
     WeatherEntity toEntity(Station station);
+
+    WeatherDto toDto(WeatherEntity weatherEntity);
 }

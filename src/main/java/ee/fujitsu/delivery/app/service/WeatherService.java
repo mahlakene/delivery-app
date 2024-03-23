@@ -3,6 +3,7 @@ package ee.fujitsu.delivery.app.service;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import ee.fujitsu.delivery.app.dto.Observation;
 import ee.fujitsu.delivery.app.dto.Station;
+import ee.fujitsu.delivery.app.dto.WeatherDto;
 import ee.fujitsu.delivery.app.entity.WeatherEntity;
 import ee.fujitsu.delivery.app.mapper.WeatherMapper;
 import ee.fujitsu.delivery.app.repository.CityRepository;
@@ -22,6 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,5 +76,28 @@ public class WeatherService {
             }
         }
         weatherRepository.saveAll(entities);
+    }
+
+    public WeatherDto getWeatherInfo(Integer wmoCode, LocalDateTime dateTime) {
+        List<WeatherEntity> allDataOfCity = weatherRepository.findAllByWmoCodeOrderByTimeStampDesc(wmoCode);
+        if (allDataOfCity.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        if (dateTime == null) {
+            return weatherRepository.toDto(allDataOfCity.get(0));
+        }
+        ZoneId zoneId = ZoneId.of("Europe/Tallinn");  // Estonia's time zone
+        long targetUnixTimestamp = dateTime.atZone(zoneId).toEpochSecond();
+        WeatherEntity closestWeather = null;
+        long minDifference = Long.MAX_VALUE;
+        for (WeatherEntity weather : allDataOfCity) {
+            long currentUnixTimestamp = weather.getTimeStamp();
+            long difference = Math.abs(targetUnixTimestamp - currentUnixTimestamp);
+            if (difference < minDifference) {
+                minDifference = difference;
+                closestWeather = weather;
+            }
+        }
+        return weatherRepository.toDto(closestWeather);
     }
 }

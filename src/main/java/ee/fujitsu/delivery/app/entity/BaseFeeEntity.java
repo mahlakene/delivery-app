@@ -16,7 +16,10 @@ import java.math.BigDecimal;
 @Table(name = "base_fee")
 @Entity
 public class BaseFeeEntity {
-    @EmbeddedId
-    private BaseFeeEntityId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long cityId;
+    private Long vehicleId;
     private BigDecimal fee;
 }

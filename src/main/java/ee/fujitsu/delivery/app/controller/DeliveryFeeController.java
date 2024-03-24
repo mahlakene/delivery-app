@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Controller for delivery fee calculation.
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/delivery/fee")
@@ -15,6 +18,9 @@ public class DeliveryFeeController {
 
     private final DeliveryFeeService deliveryFeeService;
 
+    /**
+     * Calculate the delivery fee based on city, vehicle and timestamp (optional).
+     */
     @GetMapping("/city/{cityId}/vehicle/{vehicleId}")
     public BigDecimal calculateDeliveryFee(
             @PathVariable("cityId") Long cityId,

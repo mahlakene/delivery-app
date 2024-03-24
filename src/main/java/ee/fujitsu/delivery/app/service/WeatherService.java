@@ -69,6 +69,15 @@ public class WeatherService {
         weatherRepository.saveAll(entities);
     }
 
+    /**
+     * Returns the weather info from the given station (wmo code).
+     * If there is no data about given station, exception is thrown.
+     * If given datetime is null, latest weather data is returned. If datetime is given, the weather data with
+     * the closest timestamp is returned.
+     * @param wmoCode wmo code of the station
+     * @param dateTime datetime (can be null)
+     * @return DTO
+     */
     public WeatherDto getWeatherInfo(Integer wmoCode, LocalDateTime dateTime) {
         List<WeatherEntity> allDataOfCity = weatherRepository.findAllByWmoCodeOrderByTimeStampDesc(wmoCode);
         if (allDataOfCity.isEmpty()) {

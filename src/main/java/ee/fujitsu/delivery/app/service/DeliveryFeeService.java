@@ -21,6 +21,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Service class for calculating delivery fees.
+ */
 @Service
 @RequiredArgsConstructor
 public class DeliveryFeeService {
@@ -34,6 +37,16 @@ public class DeliveryFeeService {
     private final WindSpeedFeeRepository windSpeedFeeRepository;
     private static final String FORBIDDEN_VEHICLE_MESSAGE = "Usage of selected vehicle type is forbidden";
 
+    /**
+     * Calculates the delivery fee based on the provided parameters.
+     *
+     * @param cityId     the ID of the city
+     * @param vehicleId  the ID of the vehicle
+     * @param dateTime   the date and time of the delivery
+     * @return the calculated delivery fee
+     * @throws NotFoundException        if the base fee or city or vehicle does not exist in the database
+     * @throws ForbiddenVehicleException if the vehicle is forbidden for some reason
+     */
     public BigDecimal calculateDeliveryFee(Long cityId, Long vehicleId, LocalDateTime dateTime) {
         checkIdsExistence(cityId, vehicleId);
         Optional<BaseFeeEntity> baseFeeEntity = baseFeeRepository.findByCityIdAndVehicleId(cityId, vehicleId);
@@ -45,6 +58,15 @@ public class DeliveryFeeService {
         return baseFee.add(extraFee);
     }
 
+    /**
+     * Calculates the extra fees based on the city, vehicle, and date/time of delivery.
+     *
+     * @param cityId    the ID of the city
+     * @param vehicleId the ID of the vehicle
+     * @param dateTime  the date and time of the delivery
+     * @return the total extra fees
+     * @throws NotFoundException if the city does not exist in the database
+     */
     private BigDecimal calculateExtraFees(Long cityId, Long vehicleId, LocalDateTime dateTime) {
         Integer wmoCode;
         Optional<CityEntity> cityEntity = cityRepository.findById(cityId);
@@ -60,6 +82,14 @@ public class DeliveryFeeService {
         return airTemperatureFee.add(windSpeedFee).add(phenomenonFee);
     }
 
+    /**
+     * Retrieves the air temperature fee based on the vehicle and temperature.
+     *
+     * @param vehicleId   the ID of the vehicle
+     * @param temperature the air temperature
+     * @return the air temperature fee
+     * @throws ForbiddenVehicleException if the vehicle is forbidden
+     */
     private BigDecimal getAirTemperatureFee(Long vehicleId, Float temperature) {
         Optional<AirTemperatureFeeEntity> entity = airTemperatureFeeRepository.findByTemperatureAndVehicle(temperature, vehicleId);
         if (entity.isPresent()) {
@@ -72,6 +102,14 @@ public class DeliveryFeeService {
         return BigDecimal.valueOf(0);
     }
 
+    /**
+     * Retrieves the wind speed fee based on the vehicle and wind speed.
+     *
+     * @param vehicleId the ID of the vehicle
+     * @param windSpeed the wind speed
+     * @return the wind speed fee
+     * @throws ForbiddenVehicleException if the vehicle is forbidden
+     */
     private BigDecimal getWindSpeedFee(Long vehicleId, Float windSpeed) {
         Optional<WindSpeedFeeEntity> entity = windSpeedFeeRepository.findByWindSpeedAndVehicle(windSpeed, vehicleId);
         if (entity.isPresent()) {
@@ -84,6 +122,14 @@ public class DeliveryFeeService {
         return BigDecimal.valueOf(0);
     }
 
+    /**
+     * Retrieves the phenomenon fee based on the vehicle and phenomenon.
+     *
+     * @param vehicleId  the ID of the vehicle
+     * @param phenomenon the weather phenomenon
+     * @return the phenomenon fee
+     * @throws ForbiddenVehicleException if the vehicle is forbidden
+     */
     private BigDecimal getPhenomenonFee(Long vehicleId, String phenomenon) {
         Optional<PhenomenonFeeEntity> entity = weatherPhenomenonRepository.findByPhenomenonAndVehicle(phenomenon, vehicleId);
         if (entity.isPresent()) {
@@ -96,6 +142,13 @@ public class DeliveryFeeService {
         return BigDecimal.valueOf(0);
     }
 
+    /**
+     * Checks if the city and vehicle IDs exist in the database.
+     *
+     * @param cityId    the ID of the city
+     * @param vehicleId the ID of the vehicle
+     * @throws NotFoundException if the city or vehicle does not exist in the database
+     */
     public void checkIdsExistence(Long cityId, Long vehicleId) {
         if (!cityRepository.existsById(cityId)) {
             throw new NotFoundException("City ID doesn't exist in the database.");

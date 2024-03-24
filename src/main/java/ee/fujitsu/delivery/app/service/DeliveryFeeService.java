@@ -3,6 +3,9 @@ package ee.fujitsu.delivery.app.service;
 import ee.fujitsu.delivery.app.dto.WeatherDto;
 import ee.fujitsu.delivery.app.entity.BaseFeeEntity;
 import ee.fujitsu.delivery.app.entity.CityEntity;
+import ee.fujitsu.delivery.app.entity.extrafee.AirTemperatureFeeEntity;
+import ee.fujitsu.delivery.app.entity.extrafee.PhenomenonFeeEntity;
+import ee.fujitsu.delivery.app.entity.extrafee.WindSpeedFeeEntity;
 import ee.fujitsu.delivery.app.exception.ForbiddenVehicleException;
 import ee.fujitsu.delivery.app.repository.BaseFeeRepository;
 import ee.fujitsu.delivery.app.repository.CityRepository;
@@ -26,6 +29,7 @@ public class DeliveryFeeService {
     private final AirTemperatureFeeRepository airTemperatureFeeRepository;
     private final WeatherPhenomenonRepository weatherPhenomenonRepository;
     private final WindSpeedFeeRepository windSpeedFeeRepository;
+    private static final String FORBIDDEN_VEHICLE_MESSAGE = "Usage of selected vehicle type is forbidden";
 
     public BigDecimal calculateDeliveryFee(Long cityId, Long vehicleId, LocalDateTime dateTime) {
         BaseFeeEntity baseFeeEntity = baseFeeRepository.findByCityIdAndVehicleId(cityId, vehicleId);
@@ -42,7 +46,6 @@ public class DeliveryFeeService {
         } else {
             throw new IllegalArgumentException();
         }
-        //throw new ForbiddenVehicleException("Cant use");
         WeatherDto weatherDto = weatherService.getWeatherInfo(wmoCode, dateTime);
         BigDecimal airTemperatureFee = getAirTemperatureFee(vehicleId, weatherDto.getAirTemperature());
         BigDecimal windSpeedFee = getWindSpeedFee(vehicleId, weatherDto.getWindSpeed());
@@ -51,17 +54,38 @@ public class DeliveryFeeService {
     }
 
     private BigDecimal getAirTemperatureFee(Long vehicleId, Float temperature) {
-        Optional<BigDecimal> fee = airTemperatureFeeRepository.findFeeByTemperatureAndVehicle(temperature, vehicleId);
-        return fee.orElseGet(() -> BigDecimal.valueOf(0));
+        Optional<AirTemperatureFeeEntity> entity = airTemperatureFeeRepository.findByTemperatureAndVehicle(temperature, vehicleId);
+        if (entity.isPresent()) {
+            AirTemperatureFeeEntity item = entity.get();
+            if (item.isForbidden()) {
+                throw new ForbiddenVehicleException(FORBIDDEN_VEHICLE_MESSAGE);
+            }
+            return item.getFee();
+        }
+        return BigDecimal.valueOf(0);
     }
 
     private BigDecimal getWindSpeedFee(Long vehicleId, Float windSpeed) {
-        Optional<BigDecimal> fee = windSpeedFeeRepository.findFeeByWindSpeedAndVehicle(windSpeed, vehicleId);
-        return fee.orElseGet(() -> BigDecimal.valueOf(0));
+        Optional<WindSpeedFeeEntity> entity = windSpeedFeeRepository.findByWindSpeedAndVehicle(windSpeed, vehicleId);
+        if (entity.isPresent()) {
+            WindSpeedFeeEntity item = entity.get();
+            if (item.isForbidden()) {
+                throw new ForbiddenVehicleException(FORBIDDEN_VEHICLE_MESSAGE);
+            }
+            return item.getFee();
+        }
+        return BigDecimal.valueOf(0);
     }
 
     private BigDecimal getPhenomenonFee(Long vehicleId, String phenomenon) {
-        Optional<BigDecimal> fee = weatherPhenomenonRepository.findFeeByPhenomenonAndVehicle(phenomenon, vehicleId);
-        return fee.orElseGet(() -> BigDecimal.valueOf(0));
+        Optional<PhenomenonFeeEntity> entity = weatherPhenomenonRepository.findByPhenomenonAndVehicle(phenomenon, vehicleId);
+        if (entity.isPresent()) {
+            PhenomenonFeeEntity item = entity.get();
+            if (item.isForbidden()) {
+                throw new ForbiddenVehicleException(FORBIDDEN_VEHICLE_MESSAGE);
+            }
+            return item.getFee();
+        }
+        return BigDecimal.valueOf(0);
     }
 }

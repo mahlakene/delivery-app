@@ -23,4 +23,5 @@ public class WindSpeedFeeEntity {
     private Float upperBound;
     private Long vehicleId;
     private BigDecimal fee;
+    private boolean forbidden = false;
 }

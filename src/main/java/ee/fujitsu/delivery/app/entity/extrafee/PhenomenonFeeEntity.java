@@ -22,4 +22,5 @@ public class PhenomenonFeeEntity {
     private String name;
     private Long vehicleId;
     private BigDecimal fee;
+    private boolean forbidden = false;
 }

@@ -35,12 +35,7 @@ public class DeliveryFeeService {
     private static final String FORBIDDEN_VEHICLE_MESSAGE = "Usage of selected vehicle type is forbidden";
 
     public BigDecimal calculateDeliveryFee(Long cityId, Long vehicleId, LocalDateTime dateTime) {
-        if (!cityRepository.existsById(cityId)) {
-            throw new NotFoundException("City ID doesn't exist in the database.");
-        }
-        if (!vehicleRepository.existsById(vehicleId)) {
-            throw new NotFoundException("Vehicle ID doesn't exist in the database.");
-        }
+        checkIdsExistence(cityId, vehicleId);
         Optional<BaseFeeEntity> baseFeeEntity = baseFeeRepository.findByCityIdAndVehicleId(cityId, vehicleId);
         if (baseFeeEntity.isEmpty()) {
             throw new NotFoundException("Base fee doesn't exist in the database.");
@@ -99,5 +94,14 @@ public class DeliveryFeeService {
             return item.getFee();
         }
         return BigDecimal.valueOf(0);
+    }
+
+    public void checkIdsExistence(Long cityId, Long vehicleId) {
+        if (!cityRepository.existsById(cityId)) {
+            throw new NotFoundException("City ID doesn't exist in the database.");
+        }
+        if (!vehicleRepository.existsById(vehicleId)) {
+            throw new NotFoundException("Vehicle ID doesn't exist in the database.");
+        }
     }
 }

@@ -29,4 +29,12 @@ public class ErrorHandler {
     public ResponseEntity<ErrorResponse> handleException(ApplicationException e) {
         return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
+
+    /**
+     * Handles resource not found exceptions and returns a Not Found response.
+     */
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException e) {
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
 }

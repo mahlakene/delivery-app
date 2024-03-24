@@ -7,8 +7,10 @@ import ee.fujitsu.delivery.app.entity.extrafee.AirTemperatureFeeEntity;
 import ee.fujitsu.delivery.app.entity.extrafee.PhenomenonFeeEntity;
 import ee.fujitsu.delivery.app.entity.extrafee.WindSpeedFeeEntity;
 import ee.fujitsu.delivery.app.exception.ForbiddenVehicleException;
+import ee.fujitsu.delivery.app.exception.NotFoundException;
 import ee.fujitsu.delivery.app.repository.BaseFeeRepository;
 import ee.fujitsu.delivery.app.repository.CityRepository;
+import ee.fujitsu.delivery.app.repository.VehicleRepository;
 import ee.fujitsu.delivery.app.repository.extrafee.AirTemperatureFeeRepository;
 import ee.fujitsu.delivery.app.repository.extrafee.WeatherPhenomenonRepository;
 import ee.fujitsu.delivery.app.repository.extrafee.WindSpeedFeeRepository;
@@ -25,6 +27,7 @@ public class DeliveryFeeService {
 
     private final BaseFeeRepository baseFeeRepository;
     private final CityRepository cityRepository;
+    private final VehicleRepository vehicleRepository;
     private final WeatherService weatherService;
     private final AirTemperatureFeeRepository airTemperatureFeeRepository;
     private final WeatherPhenomenonRepository weatherPhenomenonRepository;
@@ -32,8 +35,17 @@ public class DeliveryFeeService {
     private static final String FORBIDDEN_VEHICLE_MESSAGE = "Usage of selected vehicle type is forbidden";
 
     public BigDecimal calculateDeliveryFee(Long cityId, Long vehicleId, LocalDateTime dateTime) {
-        BaseFeeEntity baseFeeEntity = baseFeeRepository.findByCityIdAndVehicleId(cityId, vehicleId);
-        BigDecimal baseFee = baseFeeEntity.getFee();
+        if (!cityRepository.existsById(cityId)) {
+            throw new NotFoundException("City ID doesn't exist in the database.");
+        }
+        if (!vehicleRepository.existsById(vehicleId)) {
+            throw new NotFoundException("Vehicle ID doesn't exist in the database.");
+        }
+        Optional<BaseFeeEntity> baseFeeEntity = baseFeeRepository.findByCityIdAndVehicleId(cityId, vehicleId);
+        if (baseFeeEntity.isEmpty()) {
+            throw new NotFoundException("Base fee doesn't exist in the database.");
+        }
+        BigDecimal baseFee = baseFeeEntity.get().getFee();
         BigDecimal extraFee = calculateExtraFees(cityId, vehicleId, dateTime);
         return baseFee.add(extraFee);
     }
@@ -44,7 +56,7 @@ public class DeliveryFeeService {
         if (cityEntity.isPresent()) {
             wmoCode = cityEntity.get().getWmoCode();
         } else {
-            throw new IllegalArgumentException();
+            throw new NotFoundException("Unable to find city.");
         }
         WeatherDto weatherDto = weatherService.getWeatherInfo(wmoCode, dateTime);
         BigDecimal airTemperatureFee = getAirTemperatureFee(vehicleId, weatherDto.getAirTemperature());

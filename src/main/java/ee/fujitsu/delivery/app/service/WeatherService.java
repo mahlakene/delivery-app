@@ -5,10 +5,12 @@ import ee.fujitsu.delivery.app.dto.Observation;
 import ee.fujitsu.delivery.app.dto.Station;
 import ee.fujitsu.delivery.app.dto.WeatherDto;
 import ee.fujitsu.delivery.app.entity.WeatherEntity;
+import ee.fujitsu.delivery.app.exception.NotFoundException;
 import ee.fujitsu.delivery.app.mapper.WeatherMapper;
 import ee.fujitsu.delivery.app.repository.CityRepository;
 import ee.fujitsu.delivery.app.repository.WeatherRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import java.util.List;
  *
  * The data belong to and originate from the Estonian Environmental Agency ("ilmateenistus.ee").
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Component
@@ -43,7 +46,7 @@ public class WeatherService {
             Observation observations = xmlMapper.readValue(url, Observation.class);
             saveWeatherToDatabase(observations.getStations(), observations.getTimestamp());
         } catch (Exception e) {
-            System.out.println(e);
+            log.error("Error requesting weather data", e);
         }
     }
 
@@ -69,7 +72,7 @@ public class WeatherService {
     public WeatherDto getWeatherInfo(Integer wmoCode, LocalDateTime dateTime) {
         List<WeatherEntity> allDataOfCity = weatherRepository.findAllByWmoCodeOrderByTimeStampDesc(wmoCode);
         if (allDataOfCity.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new NotFoundException("No weather data about the given city.");
         }
         if (dateTime == null) {
             return weatherMapper.toDto(allDataOfCity.get(0));

@@ -16,7 +16,6 @@ public class JobScheduler {
      */
     @Scheduled(cron = "0 15 * * * *")
     public void updateWeatherInfo() {
-        System.out.println("YAY");
         weatherService.registerWeatherData();
     }
 }

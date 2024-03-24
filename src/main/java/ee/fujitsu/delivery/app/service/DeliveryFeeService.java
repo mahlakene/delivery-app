@@ -1,5 +1,6 @@
 package ee.fujitsu.delivery.app.service;
 
+import ee.fujitsu.delivery.app.dto.DeliveryFeeDto;
 import ee.fujitsu.delivery.app.dto.WeatherDto;
 import ee.fujitsu.delivery.app.entity.BaseFeeEntity;
 import ee.fujitsu.delivery.app.entity.CityEntity;
@@ -43,19 +44,25 @@ public class DeliveryFeeService {
      * @param cityId     the ID of the city
      * @param vehicleId  the ID of the vehicle
      * @param dateTime   the date and time of the delivery
-     * @return the calculated delivery fee
+     * @return Delivery fee DTO
      * @throws NotFoundException        if the base fee or city or vehicle does not exist in the database
      * @throws ForbiddenVehicleException if the vehicle is forbidden for some reason
      */
-    public BigDecimal calculateDeliveryFee(Long cityId, Long vehicleId, LocalDateTime dateTime) {
+    public DeliveryFeeDto calculateDeliveryFee(Long cityId, Long vehicleId, LocalDateTime dateTime) {
         checkIdsExistence(cityId, vehicleId);
+        DeliveryFeeDto result = new DeliveryFeeDto();
         Optional<BaseFeeEntity> baseFeeEntity = baseFeeRepository.findByCityIdAndVehicleId(cityId, vehicleId);
         if (baseFeeEntity.isEmpty()) {
             throw new NotFoundException("Base fee doesn't exist in the database.");
         }
         BigDecimal baseFee = baseFeeEntity.get().getFee();
         BigDecimal extraFee = calculateExtraFees(cityId, vehicleId, dateTime);
-        return baseFee.add(extraFee);
+        result.setCityId(cityId);
+        result.setVehicleId(vehicleId);
+        result.setBaseFee(baseFee);
+        result.setExtraFee(extraFee);
+        result.setTotalFee(baseFee.add(extraFee));
+        return result;
     }
 
     /**

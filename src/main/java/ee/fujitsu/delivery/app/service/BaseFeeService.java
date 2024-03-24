@@ -6,8 +6,6 @@ import ee.fujitsu.delivery.app.exception.FeeAlreadyExists;
 import ee.fujitsu.delivery.app.exception.NotFoundException;
 import ee.fujitsu.delivery.app.mapper.BaseFeeMapper;
 import ee.fujitsu.delivery.app.repository.BaseFeeRepository;
-import ee.fujitsu.delivery.app.repository.CityRepository;
-import ee.fujitsu.delivery.app.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -20,8 +18,6 @@ import java.util.Optional;
 public class BaseFeeService {
 
     private final BaseFeeRepository baseFeeRepository;
-    private final CityRepository cityRepository;
-    private final VehicleRepository vehicleRepository;
     private final DeliveryFeeService deliveryFeeService;
     private final BaseFeeMapper baseFeeMapper = Mappers.getMapper(BaseFeeMapper.class);
 

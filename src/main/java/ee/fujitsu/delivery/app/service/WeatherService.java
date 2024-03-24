@@ -31,7 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class WeatherService {
-    private final String requestUrl = "https://www.ilmateenistus.ee/ilma_andmed/xml/observations.php";
+    private static final String REQUEST_URL = "https://www.ilmateenistus.ee/ilma_andmed/xml/observations.php";
     private final WeatherRepository weatherRepository;
     private final CityRepository cityRepository;
     private final WeatherMapper weatherMapper = Mappers.getMapper(WeatherMapper.class);
@@ -42,7 +42,7 @@ public class WeatherService {
     public void registerWeatherData() {
         try {
             XmlMapper xmlMapper = new XmlMapper();
-            URL url = new URL(requestUrl);
+            URL url = new URL(REQUEST_URL);
             Observation observations = xmlMapper.readValue(url, Observation.class);
             saveWeatherToDatabase(observations.getStations(), observations.getTimestamp());
         } catch (Exception e) {

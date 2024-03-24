@@ -6,6 +6,7 @@ import ee.fujitsu.delivery.app.dto.Station;
 import ee.fujitsu.delivery.app.dto.WeatherDto;
 import ee.fujitsu.delivery.app.entity.WeatherEntity;
 import ee.fujitsu.delivery.app.exception.NotFoundException;
+import ee.fujitsu.delivery.app.exception.WeatherRequestException;
 import ee.fujitsu.delivery.app.mapper.WeatherMapper;
 import ee.fujitsu.delivery.app.repository.CityRepository;
 import ee.fujitsu.delivery.app.repository.WeatherRepository;
@@ -46,7 +47,7 @@ public class WeatherService {
             Observation observations = xmlMapper.readValue(url, Observation.class);
             saveWeatherToDatabase(observations.getStations(), observations.getTimestamp());
         } catch (Exception e) {
-            log.error("Error requesting weather data", e);
+            throw new WeatherRequestException(e.getMessage());
         }
     }
 
@@ -55,7 +56,7 @@ public class WeatherService {
      * @param stations All stations weather ifo
      * @param timeStamp timestamp
      */
-    private void saveWeatherToDatabase(Station[] stations, long timeStamp) {
+    public void saveWeatherToDatabase(Station[] stations, long timeStamp) {
         List<Integer> allWmos = cityRepository.findAllWeatherStationWmos();
         List<WeatherEntity> entities = new ArrayList<>();
         for (Station station : stations) {

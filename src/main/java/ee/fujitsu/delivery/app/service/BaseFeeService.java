@@ -6,6 +6,8 @@ import ee.fujitsu.delivery.app.exception.FeeAlreadyExists;
 import ee.fujitsu.delivery.app.exception.NotFoundException;
 import ee.fujitsu.delivery.app.mapper.BaseFeeMapper;
 import ee.fujitsu.delivery.app.repository.BaseFeeRepository;
+import ee.fujitsu.delivery.app.repository.CityRepository;
+import ee.fujitsu.delivery.app.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,8 @@ import java.util.Optional;
 public class BaseFeeService {
 
     private final BaseFeeRepository baseFeeRepository;
-    private final DeliveryFeeService deliveryFeeService;
+    private final CityRepository cityRepository;
+    private final VehicleRepository vehicleRepository;
     private final BaseFeeMapper baseFeeMapper = Mappers.getMapper(BaseFeeMapper.class);
 
     /**
@@ -37,7 +40,7 @@ public class BaseFeeService {
     public void registerBaseFee(BaseFeeDto baseFeeDto) {
         Long cityId = baseFeeDto.getCityId();
         Long vehicleId = baseFeeDto.getVehicleId();
-        deliveryFeeService.checkIdsExistence(cityId, vehicleId);
+        checkIdsExistence(cityId, vehicleId);
         Optional<BaseFeeEntity> entity = baseFeeRepository.findByCityIdAndVehicleId(cityId, vehicleId);
         if (entity.isEmpty()) {
             baseFeeRepository.save(baseFeeMapper.toEntity(baseFeeDto));
@@ -55,7 +58,7 @@ public class BaseFeeService {
     public void updateBaseFee(Long id, BaseFeeDto baseFeeDto) {
         Long cityId = baseFeeDto.getCityId();
         Long vehicleId = baseFeeDto.getVehicleId();
-        deliveryFeeService.checkIdsExistence(cityId, vehicleId);
+        checkIdsExistence(cityId, vehicleId);
         Optional<BaseFeeEntity> entity = baseFeeRepository.findById(id);
         if (entity.isEmpty()) {
             throw new NotFoundException("Base fee with given ID does is not found.");
@@ -76,6 +79,22 @@ public class BaseFeeService {
             baseFeeRepository.deleteById(id);
         } else {
             throw new NotFoundException("Base fee with given ID does is not found.");
+        }
+    }
+
+    /**
+     * Checks if the city and vehicle IDs exist in the database.
+     *
+     * @param cityId    the ID of the city
+     * @param vehicleId the ID of the vehicle
+     * @throws NotFoundException if the city or vehicle does not exist in the database
+     */
+    private void checkIdsExistence(Long cityId, Long vehicleId) {
+        if (!cityRepository.existsById(cityId)) {
+            throw new NotFoundException("City ID doesn't exist in the database.");
+        }
+        if (!vehicleRepository.existsById(vehicleId)) {
+            throw new NotFoundException("Vehicle ID doesn't exist in the database.");
         }
     }
 }

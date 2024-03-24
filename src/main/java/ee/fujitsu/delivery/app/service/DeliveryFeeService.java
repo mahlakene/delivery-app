@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -59,9 +60,9 @@ public class DeliveryFeeService {
         BigDecimal extraFee = calculateExtraFees(cityId, vehicleId, dateTime);
         result.setCityId(cityId);
         result.setVehicleId(vehicleId);
-        result.setBaseFee(baseFee);
-        result.setExtraFee(extraFee);
-        result.setTotalFee(baseFee.add(extraFee));
+        result.setBaseFee(baseFee.setScale(2, RoundingMode.HALF_UP));
+        result.setExtraFee(extraFee.setScale(2, RoundingMode.HALF_UP));
+        result.setTotalFee(baseFee.add(extraFee).setScale(2, RoundingMode.HALF_UP));
         return result;
     }
 
@@ -156,7 +157,7 @@ public class DeliveryFeeService {
      * @param vehicleId the ID of the vehicle
      * @throws NotFoundException if the city or vehicle does not exist in the database
      */
-    public void checkIdsExistence(Long cityId, Long vehicleId) {
+    private void checkIdsExistence(Long cityId, Long vehicleId) {
         if (!cityRepository.existsById(cityId)) {
             throw new NotFoundException("City ID doesn't exist in the database.");
         }

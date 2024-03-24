@@ -32,6 +32,7 @@ public class ExtraFeeService {
     private final AirTemperatureFeeMapper airTemperatureFeeMapper = Mappers.getMapper(AirTemperatureFeeMapper.class);
     private final WindSpeedFeeMapper windSpeedFeeMapper = Mappers.getMapper(WindSpeedFeeMapper.class);
     private final PhenomenonMapper phenomenonMapper = Mappers.getMapper(PhenomenonMapper.class);
+    public static final String EXTRA_FEE_NOT_FOUND= "Extra fee with given ID was not found.";
 
     /**
      * Return all air temperature extra fees.
@@ -71,7 +72,7 @@ public class ExtraFeeService {
             item.setFee(extraFeeDto.getFee());
             airTemperatureFeeRepository.save(item);
         } else {
-            throw new NotFoundException("Extra fee with given ID was not found.");
+            throw new NotFoundException(EXTRA_FEE_NOT_FOUND);
         }
     }
 
@@ -84,7 +85,7 @@ public class ExtraFeeService {
         if (airTemperatureFeeRepository.existsById(id)) {
             airTemperatureFeeRepository.deleteById(id);
         } else {
-            throw new NotFoundException("Extra fee with given ID was not found.");
+            throw new NotFoundException(EXTRA_FEE_NOT_FOUND);
         }
     }
 
@@ -126,7 +127,7 @@ public class ExtraFeeService {
             item.setFee(extraFeeDto.getFee());
             windSpeedFeeRepository.save(item);
         } else {
-            throw new NotFoundException("Extra fee with given ID was not found.");
+            throw new NotFoundException(EXTRA_FEE_NOT_FOUND);
         }
     }
 
@@ -139,7 +140,7 @@ public class ExtraFeeService {
         if (windSpeedFeeRepository.existsById(id)) {
             windSpeedFeeRepository.deleteById(id);
         } else {
-            throw new NotFoundException("Extra fee with given ID was not found.");
+            throw new NotFoundException(EXTRA_FEE_NOT_FOUND);
         }
     }
 
@@ -180,7 +181,7 @@ public class ExtraFeeService {
             item.setFee(extraFeeDto.getFee());
             weatherPhenomenonRepository.save(item);
         } else {
-            throw new NotFoundException("Extra fee with given ID was not found.");
+            throw new NotFoundException(EXTRA_FEE_NOT_FOUND);
         }
     }
 
@@ -193,7 +194,7 @@ public class ExtraFeeService {
         if (weatherPhenomenonRepository.existsById(id)) {
             weatherPhenomenonRepository.deleteById(id);
         } else {
-            throw new NotFoundException("Extra fee with given ID was not found.");
+            throw new NotFoundException(EXTRA_FEE_NOT_FOUND);
         }
     }
 
